@@ -1,11 +1,9 @@
 // Функция переноса файлов из папки в Toom Boom
 // Жарков Никита, Горьковец Ксения
-// Дата последней правки: 20.01.2020
+// Дата последней правки: 10.02.2020
 
 
 include("error.js"); 
-//include("createNode.js");
-//include("movie.js");
 
 function drag_drop(){
   window = new QWidget()       // Создаём виджет окна
@@ -13,19 +11,16 @@ function drag_drop(){
   text = new QLabel(window)    // Создаём текст "Открыть файл"
   line = new QTextEdit()       // Сюда записываются файлы, которые перетащили
   line.objectName = "MyLine"   // Даём имя объекту QLineEdit
-  //button = new QPushButton("Ок")
+
   label = new QLabel("Перетащите файл сюда ") // Создаём область для перетаскивания
   check_box = new QCheckBox("Протянуть картинку",this)
   check_box_1 = new QCheckBox("Добавить на новый слой",this)
 
   // Переопределяем, чтобы функция была связана с ladel
   label.error = error        // Функция ошибок
-  //label.createNode = createNode  // Функция переноса файлов
-  //label.directori = directori
   label.add_new_layer = add_new_layer
   label.add_one_layer = add_one_layer
   label.movie = movie
-
 
   label.globalObject = this
 
@@ -47,13 +42,10 @@ function drag_drop(){
   layout.addWidget(label,2,Qt.AlignTop)
   layout.addWidget(text,3,Qt.AlignTop)
   layout.addWidget(line,4,Qt.AlignTop)
-  //layout.addWidget(button,5,Qt.AlignBottom)
   
-  //window.adjustSize()                      // подгоняет размеры окна под его содержимое
   window.setWindowTitle("Открытие файла(ов)"); // название окна
   window.setGeometry(300,300,500,500)      // создаём геометрию окна(х,у, высота, ширина). Х и У задаются относительно размеров экрана монитора
   window.setStyleSheet("font-size: 18px; background-color: #6BBBDD;")
-  //background-color: qlineargradient( x1: 0, y1: 0, x2: 0, y2: 1,stop: 0.3 #5926f0, stop: 1 #26e2f0);")
   
   text.setText("Открытые файлы:")
   text.setStyleSheet("padding:0px; color: #000; font-size: 18px; background-color: #6BBBDD;")
@@ -61,12 +53,7 @@ function drag_drop(){
   line.setStyleSheet("padding:10px; color: #000;  font-size: 20px; border-right: 3px solid #6c6874;border-bottom: 3px solid #6c6874;\
               border-top: 1px solid #6c6874; border-left: 1px solid #6c6874; border-radius: 5px; height: 90px; width: 28;\
               background-color: #A6D4E7;")
-/*
-  // придали кнопке вид
-  button.setStyleSheet("padding:10px; color: #fff; font-size: 16px; font-weight: 500; border: 1px none #080d45; border-radius: 18px;\
-            background-color: qlineargradient( x1: 0, y1: 0, x2: 0, y2: 1,stop: 0 #0a4500, stop: 1 #009900);") 
-  button.clicked.connect(this,window.close)
-*/   
+  
   window.setLayout(layout) // всё что внутри вертикального виджета будет распологаться в окне
   window.show()
 
@@ -93,7 +80,6 @@ function drag_drop(){
       var dir_temp = System.getenv("Temp")  
       MessageLog.trace("Temp "+dir_temp)
 
-      //this.globalObject.directori(dir_temp)
       var dir = new QDir(dir_temp)
 
    if (!dir.exists("images")){
@@ -119,11 +105,6 @@ function drag_drop(){
            MessageLog.trace("88888"+myinfo.fileName())
            this.parent().layout().itemAt(4).widget().append(myinfo.fileName());
         }
-
-        /*if (myinfo.completeSuffix() === "mov"){
-          this.movie(myinfo,dir_temp)
-        }
-        else{*/
 
           this.add_one_layer(dir_temp)
       }
@@ -164,11 +145,8 @@ function drag_drop(){
         this.parent().layout().itemAt(i).widget();
         }
       }
-
       MessageLog.trace("Файл существует 666  ")
       event.accept(); // Получаем сигнал, что действие выполнено
-
-
     } // закрывает dropEvent
 }
 } // конец
@@ -195,8 +173,6 @@ function directori(dir_temp){
 
 function add_one_layer(dir_temp){
 
-//   MessageLog.trace("вошли")
-//MessageLog.trace(this)   
    dir = new QDir(dir_temp+"\\images\\")   // создаём класс дириктории(папки)
    list = dir.entryInfoList() // Записываем количесво файлов в папаке в список
 
@@ -236,9 +212,8 @@ function add_one_layer(dir_temp){
       MessageLog.trace("картинка формата PSD");
       var type = "PSD";
    }
-   else if (info.completeSuffix() === "tga"){
+   else if (elemname.indexOf(".tga")){
       MessageLog.trace("картинка формата TGA"); 
-      
       var type = "TGA";
    }
    else if (info.completeSuffix() === "tif"){
@@ -273,10 +248,6 @@ function add_one_layer(dir_temp){
       path = dir_temp +"\\images\\"+ l[i]
       MessageLog.trace("path----- "+path)
 
-
-         //var elemId = element.add(l[0], "BW", scene.numberOfUnitsZ(), "JPG", "None");  //Дабалвяем элемент указывая параметры, с которыми он откроется     
-         //var vnode = node.add(node.root(), l[i], "READ",0,0,0);
-
       MessageLog.trace("create "+Drawing.create(elemId,i+1,true));  // Создёем чертёж
       MessageLog.trace("++ "+Drawing.filename(elemId,i+1));
 
@@ -286,8 +257,7 @@ function add_one_layer(dir_temp){
       MessageLog.trace("elemId "+elemId) 
       MessageLog.trace("elemname "+elemname);
       MessageLog.trace("setEntry "+column.setEntry(l[0],1,i+1,i+1));     // цикл для xsheet
-      
-      
+
       file_1.remove() // удаляем файлы в папке "C:/temp/images" 
    }
 }
@@ -301,7 +271,6 @@ MessageLog.trace(this)
 
    var elemname = name;
    file = new QFile(path)
-
 
    var type = "";
    var number = 1;
@@ -318,7 +287,7 @@ MessageLog.trace(this)
       MessageLog.trace("картинка формата PSD"); 
       type = "PSD";
    }
-   else if (myinfo.completeSuffix() === "tga"){
+   else if (name.indexOf(".tga")){
       MessageLog.trace("картинка формата TGA"); 
       type = "TGA";
    }
@@ -329,7 +298,6 @@ MessageLog.trace(this)
    else{
       var er = "Неизвестный фортмат файла."+"\n"+"\n"+"Пожалуйста, обратитесь к Горьковец Ксении."
       this.error(er)
-      file.remove()
       break
    }
 
@@ -358,7 +326,6 @@ MessageLog.trace(this)
       MessageLog.trace(column.setEntry(elemname,1,number,1))
    }
    MessageLog.trace("++"+Drawing.filename(elemId,1));
-   //checkBox.setCheckState(Qt.Unchecked)
 }
 
 function movie(myinfo,dir_temp){
@@ -403,12 +370,8 @@ function movie(myinfo,dir_temp){
     // Находим последний кадр
     var stop_fr = frame.numberOf()
 
-     MessageLog.trace("stop_fr "+ stop_fr)
-     var add_frame = name.length-stop_fr // Число кадров, которые добавляем в Timeline к видео
-     
-     MessageLog.trace("add_frame "+add_frame)
-     MessageLog.trace("add "+frame.insert(stop_fr,add_frame)) // Добавляем пустые кадры(add_frame) после stop_fr-1
-
+    var add_frame = name.length-stop_fr // Число кадров, которые добавляем в Timeline к видео
+    frame.insert(stop_fr,add_frame) // Добавляем пустые кадры(add_frame) после stop_fr-1
 
      //в цикле   если в качестве имени elemname подаём список
      for (i=0;i<name.length;i++){
@@ -424,10 +387,7 @@ function movie(myinfo,dir_temp){
         MessageLog.trace("elemname "+name[i]);
         MessageLog.trace("setEntry "+column.setEntry(elemname,1,i+1,i+1));     // цикл для xsheet
         MessageLog.trace("++ "+Drawing.filename(elemId,i+1));
-        
+
         file.remove() // удаляем файлы в папке "C:/temp/images" 
     }
-
-
-
 } // конец функции
